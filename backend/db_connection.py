@@ -1,5 +1,7 @@
 import pymysql
-from backend.config import MYSQL_CONFIG
+# from backend.config import MYSQL_CONFIG
+from backend import config as MYSQL_CONFIG
+from backend import app
 from flask import g
 
 
@@ -35,9 +37,20 @@ class Connection():
 
 
 def get_db(db_name: str):
+  if not hasattr(g, 'db_list'):
+    setattr(g, 'db_list', [])
   if not hasattr(g, db_name):
     setattr(g, db_name, Connection(db_name))
+    g.db_list.append(db_name)
   return getattr(g, db_name)
+
+
+@app.teardown_appcontext
+def close_db(error):
+  if not hasattr(g, 'db_list'): return
+  for conn in g.db_list:
+    connection = getattr(g, conn)
+    connection.close()
 
 
 class WeatherDB():
