@@ -1,5 +1,5 @@
 import pymysql
-from config import MYSQL_CONFIG
+from backend.config import MYSQL_CONFIG
 from flask import g
 
 
@@ -19,11 +19,9 @@ class Connection():
     )
     return mysql_conn
   
-  def execute(self, sql: str, values: tuple):
-    self._cursor.execute(sql, values)
-  
-  def fetchone(self):
-    return self._cursor.fetchone()
+  @property
+  def cursor(self) -> pymysql.cursors:
+    return self._cursor
   
   def close(self):
     self._connection.close()
@@ -50,7 +48,12 @@ class WeatherDB():
     self._DB_NAME = 'iot_data'
     self.connection = get_db('iot_data')
   
-  def insert_data(self, temp: float, humidity: float) -> int:
+  def insert_data(self, temp: float, humidity: float):
     insert_sql = 'INSERT INTO {table}(temp,humidity) VALUES (%s,%s)'.format(table=self._TABLE)
-    self.connection.execute(insert_sql, (temp, humidity))
+    self.connection.cursor.execute(insert_sql, (temp, humidity))
     self.connection.commit()
+  
+  def get_data_limited(self, limit_to: int) -> list:
+    get_data_sql = 'select * from {table} ORDER BY id desc LIMIT {limit}'.format(table=self._TABLE, limit=limit_to)
+    self.connection.cursor.execute(get_data_sql)
+    return self.connection.cursor.fetchall()
