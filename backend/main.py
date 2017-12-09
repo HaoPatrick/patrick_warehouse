@@ -1,5 +1,4 @@
-from flask import Flask, request, jsonify
-# from backend import error_handler, views
+from flask import request, jsonify
 import backend
 
 app = backend.app
