@@ -1,6 +1,5 @@
 import pymysql
-# from backend.config import MYSQL_CONFIG
-from backend import config as MYSQL_CONFIG
+from backend.config import MYSQL_CONFIG
 from backend import app
 from flask import g
 

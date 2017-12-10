@@ -1,4 +1,4 @@
-from backend.db_connection import WeatherDB
+from .db_connection import WeatherDB
 
 
 def add_weather(temp: float, humidity: float):

@@ -1,8 +1,8 @@
-from flask import request, jsonify
-import backend
+from flask import Flask, request, jsonify
+from backend import views, error_handler
+from backend import app
 
-app = backend.app
-
+# app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
@@ -13,7 +13,7 @@ def hello_world():
 def post_weather_data():
   if request.method == 'POST':
     try:
-      backend.views.add_weather(request.form['temp'], request.form['humidity'])
+      views.add_weather(request.form['temp'], request.form['humidity'])
     except Exception as e:
       return e
     return jsonify({
@@ -21,9 +21,9 @@ def post_weather_data():
     })
   elif request.method == 'GET':
     try:
-      weather = backend.views.get_weather_limited(request.args['limit'])
+      weather = views.get_weather_limited(request.args['limit'])
     except KeyError:
-      raise backend.error_handler.InvalidParameter("invalid parameter")
+      raise error_handler.InvalidParameter("invalid parameter")
     return jsonify({
       'response': 'ok',
       'weather': weather
