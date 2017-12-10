@@ -16,7 +16,8 @@ class Connection():
       user=MYSQL_CONFIG['user'],
       password=MYSQL_CONFIG['password'],
       port=MYSQL_CONFIG['server_port'],
-      db=self._db_name
+      db=self._db_name,
+      charset='utf8'
     )
     return mysql_conn
   
@@ -50,6 +51,26 @@ def close_db(error):
   for conn in g.db_list:
     connection = getattr(g, conn)
     connection.close()
+
+
+class StudentDB():
+  EXEMPTION = [
+    '3150102255', '3150102182', '3150104717', '3150105549', '3150105585'
+  ]
+  
+  def __init__(self):
+    self._TABLE = 'zju_xsjbxx'
+    self._DB_NAME = 'qsc_user_session'
+    self.connection = get_db(self._DB_NAME)
+  
+  def get_student_info(self, student_id: str) -> list:
+    select_student_sql = 'select stuid, `name`, grade, zymc,bjmc,sex,sfzh from {table} ' \
+                         'where stuid={stuid}'.format(table=self._TABLE, stuid=student_id)
+    self.connection.cursor.execute(select_student_sql)
+    rv = list(self.connection.cursor.fetchone())
+    if student_id in self.EXEMPTION:
+      rv[-1] = 'exempted'
+    return rv
 
 
 class WeatherDB():
