@@ -4,5 +4,6 @@ COPY . /app
 WORKDIR /app
 RUN pip install -r requirements.txt
 RUN pip install --editable .
-ENTRYPOINT ["python"]
-CMD ["./backend/main.py"]
+WORKDIR /app/backend
+ENTRYPOINT ["gunicorn"]
+CMD ["-w", "1","-b","0.0.0.0:5000","main:app"]
