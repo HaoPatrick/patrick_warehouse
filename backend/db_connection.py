@@ -102,3 +102,15 @@ class NewsDB():
     get_data_sql = 'select * from {table} ORDER BY id desc LIMIT {limit}'.format(table=self._TABLE, limit=limit_to)
     self.connection.cursor.execute(get_data_sql)
     return self.connection.cursor.fetchall()
+
+# TODO: refactor here!!! duplicated code
+class ChannelDB():
+  def __init__(self):
+    self._TABLE = 'channel'
+    self._DB_NAME = 'iot_data'
+    self.connection = get_db(self._DB_NAME)
+  
+  def get_channel_limited(self, limit_to: int) -> list:
+    get_data_sql = 'select * from {table} ORDER BY id desc LIMIT {limit}'.format(table=self._TABLE, limit=limit_to)
+    self.connection.cursor.execute(get_data_sql)
+    return self.connection.cursor.fetchall()

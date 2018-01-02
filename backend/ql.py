@@ -29,11 +29,28 @@ class StudentInfo(graphene.ObjectType):
   social_id = graphene.String()
 
 
+class ChannelInfo(graphene.ObjectType):
+  id = graphene.Int()
+  date = graphene.String()
+  text = graphene.String()
+  channel_name = graphene.String()
+  message_id = graphene.Int()
+  deleted = graphene.Int()
+
+
 class Query(graphene.ObjectType):
   hello = graphene.String(description='A typical hello world')
   weather = graphene.List(WeatherInfo, limit=graphene.Int())
   student = graphene.Field(StudentInfo, student_id=graphene.String())
   news = graphene.List(NewsInfo, limit=graphene.Int())
+  channel = graphene.List(ChannelInfo, limit=graphene.Int())
+  
+  def resolve_channel(self, info, limit: int):
+    rv = views.get_channel_limited(limit)
+    channel_info = list(map(lambda x: ChannelInfo(
+      id=x[0], date=x[1], text=x[2], channel_name=x[3], message_id=x[4], deleted=x[5]
+    ), rv))
+    return channel_info
   
   def resolve_hello(self, info):
     return 'World'
