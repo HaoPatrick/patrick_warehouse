@@ -5,7 +5,7 @@ import backend.views as views
 class WeatherInfo(graphene.ObjectType):
   temp = graphene.Float()
   humidity = graphene.Float()
-  date = graphene.String()
+  date = graphene.String(required=False)
 
 
 class StudentInfo(graphene.ObjectType):
@@ -38,4 +38,23 @@ class Query(graphene.ObjectType):
     return rv
 
 
-schema = graphene.Schema(query=Query)
+class AddWeather(graphene.Mutation):
+  class Arguments:
+    temp = graphene.Float()
+    humidity = graphene.Float()
+  
+  ok = graphene.Boolean()
+  weather = graphene.Field(lambda: WeatherInfo)
+  
+  def mutate(self, info, temp: float, humidity: float):
+    views.add_weather(temp=temp, humidity=humidity)
+    weather = WeatherInfo(temp=temp, humidity=humidity)
+    ok = True
+    return AddWeather(weather=weather, ok=ok)
+
+
+class Mutation(graphene.ObjectType):
+  add_weather = AddWeather.Field()
+
+
+schema = graphene.Schema(query=Query, mutation=Mutation)
