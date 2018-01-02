@@ -90,3 +90,15 @@ class WeatherDB():
     get_data_sql = 'select * from {table} ORDER BY id desc LIMIT {limit}'.format(table=self._TABLE, limit=limit_to)
     self.connection.cursor.execute(get_data_sql)
     return self.connection.cursor.fetchall()
+
+
+class NewsDB():
+  def __init__(self):
+    self._TABLE = 'news'
+    self._DB_NAME = 'iot_data'
+    self.connection = get_db(self._DB_NAME)
+  
+  def get_news_limited(self, limit_to: int) -> list:
+    get_data_sql = 'select * from {table} ORDER BY id desc LIMIT {limit}'.format(table=self._TABLE, limit=limit_to)
+    self.connection.cursor.execute(get_data_sql)
+    return self.connection.cursor.fetchall()

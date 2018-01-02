@@ -8,6 +8,17 @@ class WeatherInfo(graphene.ObjectType):
   date = graphene.String(required=False)
 
 
+class NewsInfo(graphene.ObjectType):
+  id = graphene.Int()
+  author = graphene.String()
+  title = graphene.String()
+  description = graphene.String()
+  url = graphene.String()
+  date = graphene.String()
+  source = graphene.String()
+  importance = graphene.Int()
+
+
 class StudentInfo(graphene.ObjectType):
   student_id = graphene.String()
   name = graphene.String()
@@ -22,6 +33,7 @@ class Query(graphene.ObjectType):
   hello = graphene.String(description='A typical hello world')
   weather = graphene.List(WeatherInfo, limit=graphene.Int())
   student = graphene.Field(StudentInfo, student_id=graphene.String())
+  news = graphene.List(NewsInfo, limit=graphene.Int())
   
   def resolve_hello(self, info):
     return 'World'
@@ -36,6 +48,16 @@ class Query(graphene.ObjectType):
     rv = StudentInfo(student_id=rv[0], name=rv[1], grade=rv[2], major=rv[3], class_name=rv[4], sex=rv[5],
                      social_id=rv[6])
     return rv
+  
+  def resolve_news(self, info, limit: int):
+    rv = views.get_news_limited(limit)
+    print(rv)
+    new_info_list = list(map(lambda x: NewsInfo(
+      id=x[0], author=x[1], title=x[2], description=x[3],
+      url=x[4], date=x[5], source=x[6], importance=x[7]
+    ), rv))
+    # print(new_info_list)
+    return new_info_list
 
 
 class AddWeather(graphene.Mutation):

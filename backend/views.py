@@ -1,5 +1,5 @@
 from flask import request, jsonify
-from backend.db_connection import WeatherDB, StudentDB
+from backend.db_connection import WeatherDB, StudentDB, NewsDB
 from backend.error_handler import InvalidParameter
 
 
@@ -18,7 +18,6 @@ def get_weather_limited(limit_to: int) -> list:
 def get_student_info(student_id: str) -> list:
   info_db = StudentDB()
   rv = info_db.get_student_info(student_id)
-  print(rv)
   return rv
 
 
@@ -52,3 +51,9 @@ def url_weather_data():
       'response': 'ok',
       'weather': weather
     })
+
+
+def get_news_limited(limit: int) -> list:
+  news_db = NewsDB()
+  rv = news_db.get_news_limited(limit)
+  return list(rv)
